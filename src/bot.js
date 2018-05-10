@@ -1,6 +1,7 @@
 const Discord = require('discord.js')
 const token = process.env.TOKEN || require('../auth.json').token
 const logger = require('winston')
+const _ = require('lodash')
 let staticRaid = []
 
 
@@ -41,13 +42,23 @@ function addToRaid(message){
 }
 
 function removeFromRaid(message, identifier){
-
     if(identifier === 'me'){
         return spliceArray(message.author) || 'Removed:' + message.author
     }
 
     if(hasPermission(message)){
-        return spliceArray(identifier) || 'Removed: ' + identifier
+        const id = identifier.slice(2, -1)
+        console.log('ID:', id)
+        const user = bot.users.get(id)
+        console.log('UserID:', user.id)
+        const userExists = _.find(staticRaid, raider => raider.id === user.id)
+
+        if(userExists){
+            console.log(staticRaid[0].id === user.id)
+            _.remove(staticRaid, raider => raider.id === user.id)
+            return 'Removed: ' + user
+        }
+        return INVALID_USER
     }
 
     return INVALID_PERMISSIONS
@@ -55,6 +66,7 @@ function removeFromRaid(message, identifier){
 
 function spliceArray(identifier){
     const index = staticRaid.indexOf(identifier)
+    //console.log('Identifier:', index, staticRaid)
     if(index === -1) return INVALID_USER
     staticRaid.splice(index, 1)
 }

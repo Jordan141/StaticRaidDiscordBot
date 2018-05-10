@@ -18,6 +18,7 @@
   "homepage": "https://github.com/Jordan141/StaticRaidDiscordBot#readme",
   "dependencies": {
     "discord.js": "^11.3.2",
+    "lodash": "^4.17.10",
     "winston": "^2.4.2"
   }
 }
