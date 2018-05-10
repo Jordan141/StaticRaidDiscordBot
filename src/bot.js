@@ -7,6 +7,7 @@ let staticRaid = []
 
 //Commands
 const REMOVE_MEMBER = 'remove'
+const CLEAR_CURRENT_RAID = 'clearraid'
 const GET_MEMBERS = 'getmembers'
 const HELP = 'help'
 const APPLY = 'apply'
@@ -67,10 +68,10 @@ function removeFromRaid(message, identifier){
 
 function spliceArray(identifier){
     const index = staticRaid.indexOf(identifier)
-    //console.log('Identifier:', index, staticRaid)
     if(index === -1) return INVALID_USER
     staticRaid.splice(index, 1)
 }
+
 function raidToString(myRaidArray = []){
     if(myRaidArray.length === 0) return EMPTY_RAID
     return myRaidArray.reduce((sum, name, index) => sum += `#${index + 1} - ${name}`, '')
@@ -88,7 +89,8 @@ function listCommands(){
     \n!apply - Links you to the raid instance.
     \n!remove me - Removes you from the raid instance.
     \n!getmembers - Gets all current raid instance members
-    \n!remove @player - Removes that player from the raid instance.`
+    \n!remove @player - Removes that player from the raid instance.
+    \n!clearraid - Clears current raid instance.`
 }
 
 const bot = new Discord.Client({
