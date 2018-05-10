@@ -114,19 +114,19 @@ bot.on('message', message => {
         message.reply('pong')
     }
     if(command === APPLY){
-        message.reply(addToRaid(message))
+        message.channel.send(addToRaid(message))
     }
     if(command === REMOVE_MEMBER){
-        message.reply(removeFromRaid(message, args[1]))
+        message.channel.send(removeFromRaid(message, args[1]))
     }
     if(command === GET_MEMBERS){
-        message.reply(raidToString(staticRaid))
+        message.channel.send(raidToString(staticRaid))
     }
     if(command === HELP){
-        message.reply(listCommands())
+        message.channel.send(listCommands())
     }
     if(command === CLEAR_CURRENT_RAID){
-        message.reply(clearRaid(data))
+        message.channel.send(clearRaid(data))
     }
 })
 
