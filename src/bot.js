@@ -5,8 +5,11 @@ let staticRaid = []
 
 
 //Commands
-const REMOVE_MEMBER = '!removeme'
-const GET_MEMBERS = '!getmembers'
+const REMOVE_MEMBER = 'remove'
+const GET_MEMBERS = 'getmembers'
+const HELP = 'help'
+const APPLY = 'apply'
+const PING = 'ping'
 
 //Responses
 const RAID_FULL = 'Current raid is full'
@@ -14,11 +17,19 @@ const EMPTY_RAID = 'No members in current raid.'
 const ADDED_MEMBER = 'Added to static raid list.'
 const INVALID_USER = 'User is not part of raid.'
 const USER_ALREADY_EXISTS = 'You are already part of a raid!'
+const INVALID_PERMISSIONS = 'You do not have permission to do that.'
+
+//Variables
+const ADMIN_ROLE = 'amazing_role'
+const NAME = 'name'
 
 logger.remove(logger.transports.Console)
 logger.add(logger.transports.Console, { colorize: true })
 logger.level = 'debug'
 logger.info(`Token: ${token}`)
+
+
+const hasPermission = msg => msg.member.roles.find(NAME, ADMIN_ROLE)
 
 function addToRaid(message){
     if(staticRaid.includes(message.author)) return USER_ALREADY_EXISTS
@@ -29,16 +40,36 @@ function addToRaid(message){
     return ADDED_MEMBER
 }
 
-function removeFromRaid(message){
-    const index = staticRaid.indexOf(message.author)
+function removeFromRaid(message, identifier){
+
+    if(identifier === 'me'){
+        return spliceArray(message.author) || 'Removed:' + message.author
+    }
+
+    if(hasPermission(message)){
+        return spliceArray(identifier) || 'Removed: ' + identifier
+    }
+
+    return INVALID_PERMISSIONS
+}
+
+function spliceArray(identifier){
+    const index = staticRaid.indexOf(identifier)
     if(index === -1) return INVALID_USER
-    
     staticRaid.splice(index, 1)
-    return 'Removed: ' + message.author
 }
 function raidToString(myRaidArray = []){
     if(myRaidArray.length === 0) return EMPTY_RAID
-    return myRaidArray.reduce((sum, val, index) => sum += `#${index + 1} - ${val}`, '')
+    return myRaidArray.reduce((sum, name, index) => sum += `#${index + 1} - ${name}`, '')
+}
+
+function listCommands(){
+    return `Commands are:
+    \nPing - pings user.
+    \n!apply - Links you to the raid instance.
+    \n!remove me - Removes you from the raid instance.
+    \n!getmembers - Gets all current raid instance members
+    \n!remove @player - Removes that player from the raid instance.`
 }
 
 const bot = new Discord.Client({
@@ -53,19 +84,25 @@ bot.on('ready', () => {
 })
  
 bot.on('message', message => {
-    const command = message.content.toLowerCase()
+    if (message.content.substring(0, 1) != '!') return
+    
+    const args = message.content.substring(1).toLowerCase().split(' ')
+    const command = args[0]
 
-    if(command === 'ping'){
+    if(command === PING){
         message.reply('pong')
     }
-    if(command === '+'){
+    if(command === APPLY){
         message.reply(addToRaid(message))
     }
     if(command === REMOVE_MEMBER){
-        message.reply(removeFromRaid(message))
+        message.reply(removeFromRaid(message, args[1]))
     }
     if(command === GET_MEMBERS){
         message.reply(raidToString(staticRaid))
+    }
+    if(command === HELP){
+        message.reply(listCommands())
     }
 })
 
