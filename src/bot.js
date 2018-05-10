@@ -30,7 +30,7 @@ logger.level = 'debug'
 logger.info(`Token: ${token}`)
 
 
-const hasPermission = msg => msg.member.roles.find(NAME, ADMIN_ROLE)
+const userHasPermission = msg => msg.member.roles.find(NAME, ADMIN_ROLE)
 
 function addToRaid(message){
     if(staticRaid.includes(message.author)) return USER_ALREADY_EXISTS
@@ -46,7 +46,7 @@ function removeFromRaid(message, identifier){
         return spliceArray(message.author) || 'Removed:' + message.author
     }
 
-    if(hasPermission(message)){
+    if(userHasPermission(message)){
         const id = identifier.slice(2, -1)
         console.log('ID:', id)
         const user = bot.users.get(id)
