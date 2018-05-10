@@ -19,6 +19,7 @@ const ADDED_MEMBER = 'Added to static raid list.'
 const INVALID_USER = 'User is not part of raid.'
 const USER_ALREADY_EXISTS = 'You are already part of a raid!'
 const INVALID_PERMISSIONS = 'You do not have permission to do that.'
+const RAID_CLEARED = 'Current raid has been cleared.'
 
 //Variables
 const ADMIN_ROLE = 'amazing_role'
@@ -75,6 +76,12 @@ function raidToString(myRaidArray = []){
     return myRaidArray.reduce((sum, name, index) => sum += `#${index + 1} - ${name}`, '')
 }
 
+function clearRaid(data){
+    if(!userHasPermission(data)) return INVALID_PERMISSIONS
+    if(_.isEmpty(staticRaid)) return EMPTY_RAID
+    staticRaid = []
+    return RAID_CLEARED
+}
 function listCommands(){
     return `Commands are:
     \nPing - pings user.
@@ -115,6 +122,9 @@ bot.on('message', message => {
     }
     if(command === HELP){
         message.reply(listCommands())
+    }
+    if(command === CLEAR_CURRENT_RAID){
+        message.reply(clearRaid(data))
     }
 })
 
