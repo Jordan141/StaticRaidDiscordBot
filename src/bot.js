@@ -62,13 +62,13 @@ function clearRaid(data){
     return RAID_CLEARED
 }
 function listCommands(){
-    return `Commands are:
+    return `\`Commands are:
     \nPing - pings user.
     \n!apply - Links you to the raid instance.
     \n!remove me - Removes you from the raid instance.
     \n!getmembers - Gets all current raid instance members
     \n!remove @player - Removes that player from the raid instance.
-    \n!clearraid - Clears current raid instance.`
+    \n!clearraid - Clears current raid instance.\``
 }
 
 const bot = new Discord.Client({
