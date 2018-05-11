@@ -1,7 +1,8 @@
 const Commands = {
     REMOVE_MEMBER : 'remove',
     CLEAR_CURRENT_RAID : 'clearraid',
-    GET_MEMBERS : 'getmembers',
+    GET_MEMBERS : 'members',
+    TANK_COMMAND: 'tank',
     HELP : 'help',
     APPLY : 'apply',
     PING : 'ping',
