@@ -1,26 +1,36 @@
 const Discord = require('discord.js')
-const token = process.env.TOKEN || require('../auth.json').token
+const token = process.env.DISCORD_TOKEN
 const logger = require('winston')
 const _ = require('lodash')
-let staticRaid = []
+const Raid = require('./raid')
+const {Commands, Responses} = require('./static-content')
+
+const staticRaid = new Raid('Static Raid')
 
 
 //Commands
-const REMOVE_MEMBER = 'remove'
-const CLEAR_CURRENT_RAID = 'clearraid'
-const GET_MEMBERS = 'getmembers'
-const HELP = 'help'
-const APPLY = 'apply'
-const PING = 'ping'
+const {
+    REMOVE_MEMBER,
+    CLEAR_CURRENT_RAID,
+    GET_MEMBERS,
+    HELP,
+    APPLY,
+    PING
+} = Commands
 
 //Responses
-const RAID_FULL = 'Current raid is full'
-const EMPTY_RAID = 'No members in current raid.'
-const ADDED_MEMBER = 'Added to static raid list.'
-const INVALID_USER = 'User is not part of raid.'
-const USER_ALREADY_EXISTS = 'You are already part of a raid!'
-const INVALID_PERMISSIONS = 'You do not have permission to do that.'
-const RAID_CLEARED = 'Current raid has been cleared.'
+const {
+    RAID_FULL,
+    EMPTY_RAID,
+    ADDED_MEMBER,
+    USER_NOT_FOUND,
+    INVALID_USER,
+    USER_ALREADY_EXISTS,
+    INVALID_PERMISSIONS,
+    RAID_CLEARED,
+    TANK_SET,
+    NO_TANK
+} = Responses
 
 //Variables
 const ADMIN_ROLE = 'amazing_role'
@@ -34,53 +44,21 @@ logger.info(`Token: ${token}`)
 
 const userHasPermission = msg => msg.member.roles.find(NAME, ADMIN_ROLE)
 
-function addToRaid(message){
-    if(staticRaid.includes(message.author)) return USER_ALREADY_EXISTS
-    if(staticRaid.length >= 11) return RAID_FULL
-    
-    logger.info('addToRaid: ' + staticRaid.join(' ') + ' ' + message.author)
-    staticRaid.push(message.author)
-    return ADDED_MEMBER
-}
 
 function removeFromRaid(message, identifier){
-    if(identifier === 'me'){
-        return spliceArray(message.author) || 'Removed:' + message.author
-    }
+    if(identifier === 'me') return staticRaid.removeMember(message.author)
+    if(!userHasPermission(message)) return INVALID_PERMISSIONS
 
-    if(userHasPermission(message)){
-        const id = identifier.slice(2, -1)
-        console.log('ID:', id)
-        const user = bot.users.get(id)
-        console.log('UserID:', user.id)
-        const userExists = _.find(staticRaid, raider => raider.id === user.id)
-
-        if(userExists){
-            console.log(staticRaid[0].id === user.id)
-            _.remove(staticRaid, raider => raider.id === user.id)
-            return 'Removed: ' + user
-        }
-        return INVALID_USER
-    }
-
-    return INVALID_PERMISSIONS
-}
-
-function spliceArray(identifier){
-    const index = staticRaid.indexOf(identifier)
-    if(index === -1) return INVALID_USER
-    staticRaid.splice(index, 1)
-}
-
-function raidToString(myRaidArray = []){
-    if(myRaidArray.length === 0) return EMPTY_RAID
-    return myRaidArray.reduce((sum, name, index) => sum += `#${index + 1} - ${name}`, '')
+    const id = identifier.slice(2, -1)
+    const user = bot.users.get(id)
+    return staticRaid.removeMember(user)
 }
 
 function clearRaid(data){
     if(!userHasPermission(data)) return INVALID_PERMISSIONS
     if(_.isEmpty(staticRaid)) return EMPTY_RAID
-    staticRaid = []
+
+    staticRaid.clear()
     return RAID_CLEARED
 }
 function listCommands(){
@@ -94,7 +72,7 @@ function listCommands(){
 }
 
 const bot = new Discord.Client({
-    token: "",
+    token: DISCORD_TOKEN,
     autorun: true
 })
  
@@ -114,13 +92,13 @@ bot.on('message', message => {
         message.reply('pong')
     }
     if(command === APPLY){
-        message.channel.send(addToRaid(message))
+        message.channel.send(staticRaid.addMember(message))
     }
     if(command === REMOVE_MEMBER){
         message.channel.send(removeFromRaid(message, args[1]))
     }
     if(command === GET_MEMBERS){
-        message.channel.send(raidToString(staticRaid))
+        message.channel.send(staticRaid.getMembers())
     }
     if(command === HELP){
         message.channel.send(listCommands())

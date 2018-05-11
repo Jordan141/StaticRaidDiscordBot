@@ -4,7 +4,9 @@
   "description": "Raid bot because we're too lazy to look after applications",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node ./src/bot.js",
+    "test": "mocha ./test/*.test.js",
+    "test-coverage": "nyc mocha"
   },
   "repository": {
     "type": "git",
@@ -20,5 +22,10 @@
     "discord.js": "^11.3.2",
     "lodash": "^4.17.10",
     "winston": "^2.4.2"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "mocha": "^5.1.1",
+    "nyc": "^11.7.3"
   }
 }
