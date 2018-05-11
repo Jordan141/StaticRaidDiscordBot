@@ -62,8 +62,11 @@ describe('Raid Class', () => {
     it('Should return USER_NOT_FOUND', () => {
         assert.deepStrictEqual(raid.removeMember(BAD_USER), USER_NOT_FOUND)
     })
+    it('Should return ADDED MEMBER', () => {
+        assert.deepStrictEqual(raid.addMember(BAD_USER), ADDED_MEMBER)
+    })
     it('Should return INVALID_USER', () => {
-        assert.deepStrictEqual(raid.addMember(BAD_USER), INVALID_USER)
+        assert.deepStrictEqual(raid.addMember({name: 'Leroy'}), INVALID_USER)
     })
    it('Should return RAID_FULL if the members array has a length of 12', () => {
        raid.members = _.range(0, 12)

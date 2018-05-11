@@ -64,6 +64,12 @@ function assignRole(message, applicant, role){
     if(!_.has(user, 'id')) return INVALID_USER
     return staticRaid.setTank(user)
 }
+function getMembers(message){
+    const members = staticRaid.getMembers()
+    if(typeof members === "string") return members
+    const array = members.map(member => message.channel.guild.members.get(member.id).nickname || member.username)
+    return array.reduce((sum, name, index) => sum += `#${index + 1} - ${name}`, '')
+}
 function clearRaid(data){
     if(!userHasPermission(data)) return INVALID_PERMISSIONS
     if(_.isEmpty(staticRaid)) return EMPTY_RAID
@@ -79,7 +85,8 @@ function listCommands(){
     \n!members - Gets all current raid instance members
     \n!remove @player - Removes that player from the raid instance.
     \n!clearraid - Clears current raid instance.
-    \n!tank <name> - returns tank with no name argument, sets tank with name argument. \`\`\``
+    \n!tank <name> - returns tank with no name argument, sets tank with name argument.
+    \n!slaveintraining - return best slave. \`\`\``
 }
 
 const bot = new Discord.Client({
@@ -90,7 +97,7 @@ const bot = new Discord.Client({
 bot.on('ready', () => {
     logger.info('Connected')
     logger.info('Logged in as: ')
-    logger.info(`${bot.username} - # ${bot.id}`)
+    logger.info(`${bot.user.username} - #${bot.user.id}`)
 })
  
 bot.on('message', message => {
@@ -117,7 +124,7 @@ bot.on('message', message => {
         message.channel.send(removeFromRaid(message, args[1]))
     }
     if(command === GET_MEMBERS){
-        message.channel.send(staticRaid.getMembers())
+        message.channel.send(getMembers(message))
     }
     if(command === HELP){
         message.channel.send(listCommands())
@@ -129,7 +136,7 @@ bot.on('message', message => {
         if(_.isEmpty(args[1])) return message.channel.send(`Tank: ${staticRaid.getTank()}`)
         message.channel.send(assignRole(message, args[1], 'tank'))
     }
-    if(command === 'bestalt'){
+    if(command === 'slaveintraining'){
         message.channel.send('https://bnstree.com/character/eu/Miadonis')
     }
 })

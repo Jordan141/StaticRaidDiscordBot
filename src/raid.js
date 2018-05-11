@@ -55,12 +55,13 @@ class Raid {
         if(this.isFull()) return RAID_FULL
         if(!_.has(member, 'id') || _.isEmpty(member)) return INVALID_USER
         if(this.hasMember(member)) return USER_ALREADY_EXISTS
+        
         this.members.push(member)
         return ADDED_MEMBER
     }
     getMembers(){
         if(this.members.length === 0) return EMPTY_RAID
-        return this.members.reduce((sum, name, index) => sum += `#${index + 1} - ${name}`, '')
+        return this.members
     }
     removeMember(member){    
         if(!this.hasMember(member)) return USER_NOT_FOUND
