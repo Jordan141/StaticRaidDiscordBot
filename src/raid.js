@@ -39,7 +39,7 @@ class Raid {
         return !_.isEmpty(this.tank)
     }
     hasMember(member){
-       return !!_.find(this.members, raider => raider.id === member.id)
+       return !!_.some(this.members, raider => raider.id === member.id)
     }
     clear(){
         this.members = []
