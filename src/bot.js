@@ -189,8 +189,8 @@ bot.on('message', async message => {
         if(_.isEmpty(guildConf.currentRaid)) return message.channel.send(NO_CURRENT_RAID)
         const raid = guildConf.currentRaid
 
-        if(_.isEmpty(args[1])) return message.channel.send(`Tank: ${raid.getTank()}`)
-        return message.channel.send(utils.assignRole(raid, message, args[0], 'tank'))
+        if(_.isEmpty(args[0])) return message.channel.send(`Tank: ${raid.getTank()}`)
+        return message.channel.send(utils.assignRole(raid, bot, args[0], 'tank'))
     }
     if(command === 'slaveintraining'){
         return message.channel.send('https://bnstree.com/character/eu/Miadonis')

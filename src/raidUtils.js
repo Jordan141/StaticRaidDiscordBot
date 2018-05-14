@@ -7,11 +7,11 @@ function removeFromRaid(raid, message, identifier){
     const user = bot.users.get(id)
     return raid.removeMember(user)
 }
-function assignRole(raid, message, applicant, role){
+function assignRole(raid, client, applicant, role){
     if(role !== 'tank') return 'INVALID ROLE'
     
     const id = applicant.slice(2, -1)
-    const user = bot.users.get(id)
+    const user = client.users.get(id)
 
     if(!_.has(user, 'id')) return INVALID_USER
     return raid.setTank(user)
