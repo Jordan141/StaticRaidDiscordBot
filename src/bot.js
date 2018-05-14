@@ -42,7 +42,14 @@ const {
 //Variables
 const ADMIN_ROLE = 'amazing_role'
 const NAME = 'name'
-const settings = new Enmap({provider: new EnmapLevel({name: "settings"})})
+const settings = new Enmap({provider: new EnmapMongo({
+    name: 'settings',
+    dbName: 'raids',
+    user: dbUser,
+    pass: dbPassword,
+    host: dbAddress,
+    port: dbPort
+})})
 
 const defaultSettings = {
     prefix: "!",
